@@ -3,36 +3,48 @@
 //Isso permite que a classe de alto nível (ProdutoService) dependa de abstrações, tornando o código mais flexível e testável.
 //Além disso, a classe de baixo nível (ProdutoRepository) pode ser substituída por outra implementação que também implemente a interface IProdutoRepository, sem afetar a classe de alto nível (ProdutoService).
 
-//1. Classe depende de classe concreta:
-public class Report
-{
-    private readonly PdfExporter _exporter = new PdfExporter();
-}
+// Exemplo de violação do DIP:
+// Uma classe de alto nível (ProdutoService) depende diretamente de uma classe de baixo nível (ProdutoRepository), o que torna o código rígido e difícil de testar.
 
-//2. Serviço com new direto:
-public class OrderService
+public class Produto
 {
-    private readonly PaymentService _payment = new PaymentService();
+    public string Nome { get; set; }
+    public decimal Preco { get; set; }
 }
-
-//3. Controller usando classe concreta:
-public class AuthController
+public class ProdutoRepository
 {
-    private readonly JwtAuthService _auth = new JwtAuthService();
-}
-
-//4. Cliente escolhe estratégia dentro da classe:
-public class DiscountApplier
-{
-    public void Apply(string tipo)
+    public void Adicionar(Produto produto)
     {
-        if (tipo == "blackfriday")
-            new BlackFridayDiscount().Apply();
+        // Lógica para adicionar o produto ao banco de dados
     }
 }
-
-//5. Sem injeção de dependência:
-public class NotificationService
+public class ProdutoService
 {
-    private readonly EmailSender _sender = new EmailSender();
+    private readonly ProdutoRepository _produtoRepository;
+
+    public ProdutoService()
+    {
+        _produtoRepository = new ProdutoRepository();
+    }
+
+    public void AdicionarProduto(Produto produto)
+    {
+        _produtoRepository.Adicionar(produto);
+    }
 }
+public class ProdutoController
+{
+    private readonly ProdutoService _produtoService;
+
+    public ProdutoController()
+    {
+        _produtoService = new ProdutoService();
+    }
+
+    public void AdicionarProduto(Produto produto)
+    {
+        _produtoService.AdicionarProduto(produto);
+    }
+}
+// A violação do DIP ocorre quando uma classe de alto nível (ProdutoService) depende diretamente de uma classe de baixo nível (ProdutoRepository), o que torna o código rígido e difícil de testar. Isso pode ser resolvido utilizando injeção de dependência, onde a classe de alto nível depende de uma abstração (interface) em vez de uma implementação concreta.
+

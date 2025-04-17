@@ -3,41 +3,38 @@
 // O princípio da responsabilidade única afirma que uma classe deve ter apenas uma razão para mudar, ou seja, deve ter apenas uma responsabilidade.
 // Isso significa que cada classe deve ser responsável por uma única tarefa ou funcionalidade, o que facilita a manutenção e a compreensão do código.
 
-//1. Classe faz lógica de negócio e persistência:
-public class Order
-{
-    public void AddItem(Item item) { /* lógica */ }
-    public void SaveToDatabase() { /* persiste no banco */ }
-}
+// Exemplos de violação do SRP:
+// Uma classe que lida com a lógica de negócios e também com a persistência de dados:
 
-//2. Controller que trata requisição e faz validação manual:
-public class OrderController
+public class UserService
 {
-    public void CreateOrder(Order order)
+    public void RegisterUser(User user)
     {
-        if (order == null) throw new ArgumentNullException(nameof(order));
-        // lógica de criação de pedido
+        // Lógica de registro de usuário
+        SaveToDatabase(user);
+    }
+
+    private void SaveToDatabase(User user)
+    {
+        // Lógica de persistência de dados
     }
 }
 
-//3. Classe que gera relatório e envia e-mail:
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Uma classe que lida com a lógica de negócios e também com a formatação de dados para exibição:
+
 public class ReportGenerator
 {
-    public void GenerateReport(Order order) { /* gera relatório */ }
-    public void SendEmail(Order order) { /* envia e-mail */ }
-}
+    public string GenerateReport(List<User> users)
+    {
+        // Lógica de geração de relatório
+        return FormatReport(users);
+    }
 
-//4. ViewModel que manipula dados e acessa banco:
-public class OrderViewModel
-{
-    public void LoadData() { /* carrega dados */ }
-    public void SaveData() { /* salva dados */ }
-}
-
-//5. Classe de utilitário que faz de tudo:
-public class Utility
-{
-    public void DoSomething() { /* faz algo */ }
-    public void DoAnotherThing() { /* faz outra coisa */ }
-    public void DoYetAnotherThing() { /* faz mais uma coisa */ }
+    private string FormatReport(List<User> users)
+    {
+        // Lógica de formatação de relatório
+        return "Relatório formatado";
+    }
 }

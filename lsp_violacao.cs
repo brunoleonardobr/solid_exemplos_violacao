@@ -4,56 +4,63 @@
 // Isso significa que as subclasses devem manter a mesma interface e comportamento da classe base, respeitando o contrato estabelecido por ela.
 // Isso garante que o código que utiliza a classe base funcione corretamente com as subclasses, promovendo a reutilização e a extensibilidade do código.
 
-//1. Subclasse que lança exceção:
-public class Bird { public virtual void Fly() {} }
+// Exemplo de violação do LSP:
+// Uma classe `Cachorro` que herda de uma classe `Animal` e altera o comportamento esperado da classe base.
 
-public class Ostrich : Bird
-{
-    public override void Fly() => throw new NotImplementedException();
-}
-
-//2. Subclasse altera comportamento esperado:
-public class Rectangle
-{
-    public virtual int Width { get; set; }
-    public virtual int Height { get; set; }
-}
-
-public class Square : Rectangle
-{
-    public override int Width { set { base.Width = value; base.Height = value; } }
-    public override int Height { set { base.Width = value; base.Height = value; } }
-}
-
-//3. Classe filha ignora contrato da base:
-public class FileExporter
-{
-    public virtual void Export() => Console.WriteLine("Exportando...");
-}
-
-public class SilentExporter : FileExporter
-{
-    public override void Export() { }
-}
-
-//4. Animal que fala mas nem todos falam:
 public class Animal
 {
-    public virtual void Speak() => Console.WriteLine("Sound");
+    public virtual void FazerBarulho()
+    {
+        Console.WriteLine("Animal faz barulho");
+    }
+}
+public class Cachorro : Animal
+{
+    public override void FazerBarulho()
+    {
+        Console.WriteLine("Cachorro late");
+    }
+}
+public class Peixe : Animal
+{
+    public override void FazerBarulho()
+    {
+        Console.WriteLine("Peixe não faz barulho");
+    }
 }
 
-public class Fish : Animal
-{
-    public override void Speak() => throw new Exception("Fish can't speak!");
-}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//5. Subclasse muda retorno:
-public class Payment
+// Outro exemplo de violação do LSP via interface:
+// Uma interface `Forma` que define um método `CalcularArea`, mas a implementação de uma classe `Circulo` não respeita o contrato da interface.
+public interface IForma
 {
-    public virtual bool Process() => true;
+    double CalcularArea();
 }
+public class Circulo : IForma
+{
+    public double Raio { get; set; }
 
-public class InvalidPayment : Payment
-{
-    public override bool Process() => throw new Exception("Invalid");
+    public double CalcularArea()
+    {
+        return Math.PI * Raio * Raio;
+    }
 }
+public class Retangulo : IForma
+{
+    public double Largura { get; set; }
+    public double Altura { get; set; }
+
+    public double CalcularArea()
+    {
+        return Largura * Altura;
+    }
+}
+public class AreaCalculator
+{
+    public double CalcularArea(IForma forma)
+    {
+        return forma.CalcularArea();
+    }
+}
+// A violação do LSP ocorre quando a implementação de `CalcularArea` em `Circulo` não respeita o contrato da interface `IForma`, pois o método não é aplicável a todas as formas. Isso pode levar a comportamentos inesperados quando se tenta calcular a área de um círculo usando a interface `IForma`.

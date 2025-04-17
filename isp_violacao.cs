@@ -3,7 +3,6 @@
 // Isso promove a coesão e a reutilização de código, além de facilitar a manutenção e a evolução do sistema.
 // O ISP é um princípio importante para garantir que as classes sejam coesas e que o código seja fácil de entender e manter.
 
-//1. Interface grande demais:
 public interface IWorker
 {
     void Work();
@@ -13,42 +12,25 @@ public interface IWorker
 public class Robot : IWorker
 {
     public void Work() { }
+
+    // Violação: robôs não comem, mas são forçados a implementar esse método.
     public void Eat() => throw new NotImplementedException();
 }
 
-//2. Interface única para diferentes ações:
-public interface IAnimal
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+public interface INotificationSender
 {
-    void Eat();
-    void Fly();
-    void Swim();
+    void SendEmail(string message);
+    void SendSms(string message);
+    void SendPush(string message);
 }
 
-//3. Interface de cadastro com método de exclusão:
-public interface IRegisterService
+public class SmsSender : INotificationSender
 {
-    void Create();
-    void Delete();
-}
+    public void SendSms(string message) { }
 
-public class AuditService : IRegisterService
-{
-    public void Create() { }
-    public void Delete() => throw new InvalidOperationException();
-}
-
-//4. Interface única para múltiplos canais:
-public interface IMessageSender
-{
-    void SendEmail();
-    void SendSms();
-    void SendPush();
-}
-
-//5. Interface com responsabilidades mistas:
-public interface IUserOperations
-{
-    void CreateUser();
-    void ResetPassword();
-    void DeactivateUser();
+    // Violação: forçado a implementar métodos que não fazem parte do seu escopo
+    public void SendEmail(string message) => throw new NotImplementedException();
+    public void SendPush(string message) => throw new NotImplementedException();
 }
